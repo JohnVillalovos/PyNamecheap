@@ -12,10 +12,12 @@ try:
 except:
     pass
 
+
 def random_domain_name():
     import random
     from time import gmtime, strftime
-    domain_name = "%s-%s.com" % (strftime("%Y%m%d-%H%M%S", gmtime()), random.randint(0, 10**16))
+    domain_name = "%s-%s.com" % (strftime("%Y%m%d-%H%M%S", gmtime()),
+                                 random.randint(0, 10**16))
     return domain_name
 
 
@@ -46,8 +48,7 @@ def test_register_domain():
         PostalCode='771-0144',
         Country='Japan',
         Phone='+81.123123123',
-        EmailAddress='jack.trotter@example.com'
-    )
+        EmailAddress='jack.trotter@example.com')
     return domain_name
 
 
@@ -82,16 +83,14 @@ def test_domains_getContacts():
 def test_domains_dns_setHosts():
     api = Api(username, api_key, username, ip_address, sandbox=True)
     domain_name = test_register_domain()
-    api.domains_dns_setHosts(
-        domain_name,
-        [{
-            'HostName': '@',
-            'RecordType': 'URL',
-            'Address': 'http://news.ycombinator.com',
-            'MXPref': '10',
-            'TTL': '100'
-        }]
-    )
+    api.domains_dns_setHosts(domain_name, [{
+        'HostName': '@',
+        'RecordType': 'URL',
+        'Address': 'http://news.ycombinator.com',
+        'MXPref': '10',
+        'TTL': '100'
+    }])
+
 
 #
 # I wasn't able to get this to work on any public name servers that I tried
@@ -113,22 +112,19 @@ def test_domains_dns_setHosts():
 def test_domains_dns_getHosts():
     api = Api(username, api_key, username, ip_address, sandbox=True)
     domain_name = test_register_domain()
-    api.domains_dns_setHosts(
-        domain_name,
-        [{
-            'HostName': '@',
-            'RecordType': 'URL',
-            'Address': 'http://news.ycombinator.com',
-            'MXPref': '10',
-            'TTL': '100'
-        }, {
-            'HostName': '*',
-            'RecordType': 'A',
-            'Address': '1.2.3.4',
-            'MXPref': '10',
-            'TTL': '1800'
-        }]
-    )
+    api.domains_dns_setHosts(domain_name, [{
+        'HostName': '@',
+        'RecordType': 'URL',
+        'Address': 'http://news.ycombinator.com',
+        'MXPref': '10',
+        'TTL': '100'
+    }, {
+        'HostName': '*',
+        'RecordType': 'A',
+        'Address': '1.2.3.4',
+        'MXPref': '10',
+        'TTL': '1800'
+    }])
 
     hosts = api.domains_dns_getHosts(domain_name)
 
@@ -136,52 +132,44 @@ def test_domains_dns_getHosts():
     del hosts[0]['HostId']
     del hosts[1]['HostId']
 
-    expected_result = [
-        {
-            'Name': '*',
-            'Address': '1.2.3.4',
-            'TTL': '1800',
-            'Type': 'A',
-            'MXPref': '10',
-            'AssociatedAppTitle': '',
-            'FriendlyName': '',
-            'IsActive': 'true',
-            'IsDDNSEnabled': 'false'
-        }, {
-            'Name': '@',
-            'Address': 'http://news.ycombinator.com',
-            'TTL': '100',
-            'Type': 'URL',
-            'MXPref': '10',
-            'AssociatedAppTitle': '',
-            'FriendlyName': '',
-            'IsActive': 'true',
-            'IsDDNSEnabled': 'false'
-        }
-    ]
+    expected_result = [{
+        'Name': '*',
+        'Address': '1.2.3.4',
+        'TTL': '1800',
+        'Type': 'A',
+        'MXPref': '10',
+        'AssociatedAppTitle': '',
+        'FriendlyName': '',
+        'IsActive': 'true',
+        'IsDDNSEnabled': 'false'
+    }, {
+        'Name': '@',
+        'Address': 'http://news.ycombinator.com',
+        'TTL': '100',
+        'Type': 'URL',
+        'MXPref': '10',
+        'AssociatedAppTitle': '',
+        'FriendlyName': '',
+        'IsActive': 'true',
+        'IsDDNSEnabled': 'false'
+    }]
     assert_equal(hosts, expected_result)
 
 
 def test_domains_dns_addHost():
     api = Api(username, api_key, username, ip_address, sandbox=True)
     domain_name = test_register_domain()
-    api.domains_dns_setHosts(
-        domain_name,
-        [{
-            'HostName': '@',
-            'RecordType': 'URL',
-            'Address': 'http://news.ycombinator.com'
-        }]
-    )
-    api.domains_dns_addHost(
-        domain_name,
-        {
-            'Name': 'test',
-            'Type': 'A',
-            'Address': '1.2.3.4',
-            'TTL': '100'
-        }
-    )
+    api.domains_dns_setHosts(domain_name, [{
+        'HostName': '@',
+        'RecordType': 'URL',
+        'Address': 'http://news.ycombinator.com'
+    }])
+    api.domains_dns_addHost(domain_name, {
+        'Name': 'test',
+        'Type': 'A',
+        'Address': '1.2.3.4',
+        'TTL': '100'
+    })
 
     hosts = api.domains_dns_getHosts(domain_name)
 
@@ -189,29 +177,27 @@ def test_domains_dns_addHost():
     del hosts[0]['HostId']
     del hosts[1]['HostId']
 
-    expected_result = [
-        {
-            'Name': 'test',
-            'Address': '1.2.3.4',
-            'TTL': '100',
-            'Type': 'A',
-            'MXPref': '10',
-            'AssociatedAppTitle': '',
-            'FriendlyName': '',
-            'IsActive': 'true',
-            'IsDDNSEnabled': 'false'
-        }, {
-            'Name': '@',
-            'Address': 'http://news.ycombinator.com',
-            'TTL': '1800',
-            'Type': 'URL',
-            'MXPref': '10',
-            'AssociatedAppTitle': '',
-            'FriendlyName': '',
-            'IsActive': 'true',
-            'IsDDNSEnabled': 'false'
-        }
-    ]
+    expected_result = [{
+        'Name': 'test',
+        'Address': '1.2.3.4',
+        'TTL': '100',
+        'Type': 'A',
+        'MXPref': '10',
+        'AssociatedAppTitle': '',
+        'FriendlyName': '',
+        'IsActive': 'true',
+        'IsDDNSEnabled': 'false'
+    }, {
+        'Name': '@',
+        'Address': 'http://news.ycombinator.com',
+        'TTL': '1800',
+        'Type': 'URL',
+        'MXPref': '10',
+        'AssociatedAppTitle': '',
+        'FriendlyName': '',
+        'IsActive': 'true',
+        'IsDDNSEnabled': 'false'
+    }]
     assert_equal(hosts, expected_result)
 
 
@@ -219,19 +205,18 @@ def test_domains_dns_bulkAddHosts():
     api = Api(username, api_key, username, ip_address, sandbox=True)
     api.payload_limit = 3
     domain_name = test_register_domain()
-    api.domains_dns_setHosts(
-        domain_name,
-        [{
-            'HostName': '@',
-            'RecordType': 'URL',
-            'Address': 'http://news.ycombinator.com'
-        }]
-    )
+    api.domains_dns_setHosts(domain_name, [{
+        'HostName': '@',
+        'RecordType': 'URL',
+        'Address': 'http://news.ycombinator.com'
+    }])
     for i in range(1, 10):
-        api.domains_dns_addHost(
-            domain_name,
-            {'Name': "test" + str(i), 'Type': 'A', 'Address': '1.2.3.4', 'TTL': '60'}
-        )
+        api.domains_dns_addHost(domain_name, {
+            'Name': "test" + str(i),
+            'Type': 'A',
+            'Address': '1.2.3.4',
+            'TTL': '60'
+        })
 
     hosts = api.domains_dns_getHosts(domain_name)
 
@@ -244,55 +229,42 @@ def test_domains_dns_bulkAddHosts():
 def test_domains_dns_delHost():
     api = Api(username, api_key, username, ip_address, sandbox=True)
     domain_name = test_register_domain()
-    api.domains_dns_setHosts(
-        domain_name,
-        [{
-            'HostName': '@',
-            'RecordType': 'URL',
-            'Address': 'http://news.ycombinator.com',
-            'TTL': '200'
-        }, {
-            'HostName': 'test',
-            'RecordType': 'A',
-            'Address': '1.2.3.4'
-        }]
-    )
+    api.domains_dns_setHosts(domain_name, [{
+        'HostName': '@',
+        'RecordType': 'URL',
+        'Address': 'http://news.ycombinator.com',
+        'TTL': '200'
+    }, {
+        'HostName': 'test',
+        'RecordType': 'A',
+        'Address': '1.2.3.4'
+    }])
     api.domains_dns_delHost(
-        domain_name,
-        {
-            'Name': 'test',
-            'Type': 'A',
-            'Address': '1.2.3.4'
-        }
-    )
+        domain_name, {'Name': 'test',
+                      'Type': 'A',
+                      'Address': '1.2.3.4'})
 
     hosts = api.domains_dns_getHosts(domain_name)
 
     # these might change
     del hosts[0]['HostId']
 
-    expected_result = [
-        {
-            'Name': '@',
-            'Address': 'http://news.ycombinator.com',
-            'TTL': '200',
-            'Type': 'URL',
-            'MXPref': '10',
-            'AssociatedAppTitle': '',
-            'FriendlyName': '',
-            'IsActive': 'true',
-            'IsDDNSEnabled': 'false'
-        }
-    ]
+    expected_result = [{
+        'Name': '@',
+        'Address': 'http://news.ycombinator.com',
+        'TTL': '200',
+        'Type': 'URL',
+        'MXPref': '10',
+        'AssociatedAppTitle': '',
+        'FriendlyName': '',
+        'IsActive': 'true',
+        'IsDDNSEnabled': 'false'
+    }]
     assert_equal(hosts, expected_result)
 
 
 def test_list_of_dictionaries_to_numbered_payload():
-    x = [
-        {'foo': 'bar', 'cat': 'purr'},
-        {'foo': 'buz'},
-        {'cat': 'meow'}
-    ]
+    x = [{'foo': 'bar', 'cat': 'purr'}, {'foo': 'buz'}, {'cat': 'meow'}]
 
     result = Api._list_of_dictionaries_to_numbered_payload(x)
 
